@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>String Emporium</title>
+        <! -- download jquery -->
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    </head>
+    <body>
+        <h1>Shopping Cart</h1>
+
+        <div>
+            <ul>
+                <li><a class="add-to-cart" href="#" data-name="Violin" data-price="20000">Violin $20000</a></li>
+                <li><a class="add-to-cart" href="#" data-name="Viola" data-price="15000">Viola $15000</a></li>
+                <li><a class="add-to-cart" href="#" data-name="Cello" data-price="10000">Cello $10000</a></li>
+                <li><a class="add-to-cart" href="#" data-name="Bass" data-price="8000">Bass $8000</a></li>
+
+            </ul>
+            <button id="clear-cart">Clear Cart</button?>
+
+        </div>
+
+
+        <div>
+           <ul id="show-cart">
+               <!--  -->
+           </ul> 
+
+        </div>
+
+        <script> //javascript portion
+
+            $(".add-to-cart").click(function(event){
+                event.preventDefault(); //prevent functions from jumping to top of page which is their default
+                var name = $(this).attr("data-name");//represents the link that we click
+                var price = Number($(this).attr("data-price"));//use Number funtion to convert to number
+
+                addItemToCart(name, price, 1);
+                displayCart(); //so that we can see updated cart everytime we add to the cart.
+            });
+
+            function displayCart() { //will fill the ul of show-cart with items
+                //test to see when the displayCart is called
+                //console.log(**Display Cart**);
+
+                    var cartArray = listCart();
+                    //console.log("**count Cart : "+cartArray.length);  test to see what is in my cart array
+                    var output = "";
+                    for(var i in cartArray) {
+                        output += "<li>"+cartArray[i].name+" "+cartArray[i].count+"</li>" //display output string. += is appending or adding to the end of the list everytime we go through the loop.  Will use this to write list items into the show-cart.
+                    }
+                    $("#show-cart").html(output); //overiding everything in the show-cart element.  # is used because it is an ID
+            }
+
+
+        //**********************************************************
+        //Shopping Cart functions
+        var cart = [];
+        var Item = function(name, price, count) {
+            this.name = name
+            this.price = price
+            this.count = count
+        };
+        function addItemToCart(name, price, count){
+            for(var i in cart) {
+                if (cart[i].name === name) {
+                    cart[i].count += count;
+                    return;
+                }
+            }
+
+            var item = new Item(name, price, count);
+            cart.push(item);
+            saveCart(); //add this function so that each time something is added it will be saved in the cart
+        }
+        addItemToCart("Violin", 20000, 1);
+        console.log(cart); //test function
+        addItemToCart("Viola", 15000, 1);
+        addItemToCart("Cello"; 10000, 1);
+        addItemToCart("Bass", 8000, 1);
+        /*console.log(cart.length);
+        console.log(cart[0].name);
+        console.log(cart[0].price);
+        console.log(cart[0].count);*/
+
+        function removeItemFromCart(name) {
+            for (var i in cart) {
+                if (cart[i].name === name) {
+                    cart[i].count --;
+                    if(cart[i].count === 0){
+                        cart.splice(i, 1); //add or remove the item from array if less than 0 items. To not allow negative items 
+                    }
+                    break;
+
+                }
+                saveCart();
+            }
+        } //remove one item
+        //test function above
+        /*console.log(cart[0].count); 
+        removeItemFromCart("Violin");
+        console.log(cart[0].count);*/
+
+        function removeItemFromCartAll(name) {
+            for (var i in cart){
+                if(cart[i].name === name){
+                    cart.splice(i, 1);
+                    break; //don't need to look for more items, because there should only be one item with this name.
+
+                }
+
+            }//test function above
+            /*console.log(cart.length);
+            console.log(cart);
+            removeItemFromCartAll("Violin");
+            console.log(cart.length);
+            console.log(cart);*/
+            saveCart();
+        } //remove all particular items of the same name
+
+        function clearCart() {
+            cart = [];
+            saveCart();
+
+        }//remove all items
+        /*test function above
+        clearCart();
+        console.log(cart);*/
+
+        function countCart() {
+            var totalCount = 0; //start with value of 0 outside loop
+            for(var i in cart) {
+                totalCount += cart[i].count;
+               
+            }
+            return totalCount;
+        } //returns total count
+        /*test function above
+        console.log(countCart() );*/
+
+        function totalCart() {
+                totalCost = 0;  //start beginning cost
+                for (var i in cart) {
+                    totatCost += cart[i].price;
+
+                } return totalCost;       
+        } //returns total cost
+            /*test function above
+            console.log(totalCost() );*/
+
+        function listCart() {
+               var cartCopy = [];
+                for(var i in cart){
+                    var item = cart[i];
+                    var itemCopy = {};
+                    for(var p in item) /*p = property*/ {
+                        itemCopy[p] = item[p];
+
+                    }
+                cartCopy.push(itemCopy);
+                } 
+                return cartCopy;
+       }
+        //display list array of items in cart and decoupled from the html
+        /*test function above
+        console.log(listCart() );*/
+
+
+        function saveCart() {
+            localStorage.setItem("shoppingCart", JSON.stringify(cart));/*save cart array and use Javascript Object Notation to write js objects in arrays as a string. Using local storage so that if we refresh the page it will still be saved and can be used on other pages*/
+
+        } //save items in cart for later in local storage
+        /*test function above
+        localStorage.setItem("username", "Joe");
+        localStorage.setItem("age", 33);
+        */
+
+        function loadCart();
+        displayCart(); //show what is initially in the cart
+        {
+            cart = JSON.parse(localCtorage.getItem("shoppingCart")); //grab the JSON object from above and retrieve and view cart on page from local storage as array*/
+        }/*test function above
+        loadCart();
+        var array = listCart();
+        console.log(--------------);
+        console.log(array);*/
+
+
+        </script>
+    </body>
+</html>
+
+
